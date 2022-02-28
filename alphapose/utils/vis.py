@@ -453,7 +453,7 @@ def vis_frame(frame, im_res, opt, vis_thres, format='coco'):
                 continue
             cor_x, cor_y = int(kp_preds[n, 0]), int(kp_preds[n, 1])
             part_line[n] = (int(cor_x), int(cor_y))
-            bg = img.copy()
+            bg = img  # .copy()
             if n < len(p_color):
                 if opt.tracking:
                     cv2.circle(bg, (int(cor_x), int(cor_y)), 2, color, -1)
@@ -466,13 +466,13 @@ def vis_frame(frame, im_res, opt, vis_thres, format='coco'):
                 transparency = float(max(0, min(1, kp_scores[n])))
             else:
                 transparency = float(max(0, min(1, kp_scores[n]*2)))
-            img = cv2.addWeighted(bg, transparency, img, 1 - transparency, 0)
+            # img = cv2.addWeighted(bg, transparency, img, 1 - transparency, 0)
         # Draw limbs
         for i, (start_p, end_p) in enumerate(l_pair):
             if start_p in part_line and end_p in part_line:
                 start_xy = part_line[start_p]
                 end_xy = part_line[end_p]
-                bg = img.copy()
+                bg = img  # .copy()
 
                 X = (start_xy[0], end_xy[0])
                 Y = (start_xy[1], end_xy[1])
@@ -495,7 +495,7 @@ def vis_frame(frame, im_res, opt, vis_thres, format='coco'):
                     transparency = float(max(0, min(1, (kp_scores[start_p] + kp_scores[end_p]))))
 
                 #transparency = float(max(0, min(1, 0.5 * (kp_scores[start_p] + kp_scores[end_p])-0.1)))
-                img = cv2.addWeighted(bg, transparency, img, 1 - transparency, 0)
+                # img = cv2.addWeighted(bg, transparency, img, 1 - transparency, 0)
     return img
 
 
