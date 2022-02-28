@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 import natsort
+from PIL import Image
 
 from detector.apis import get_detector
 from trackers.tracker_api import Tracker
@@ -231,7 +232,12 @@ if __name__ == "__main__":
                 if orig_img is None:
                     break
                 if boxes is None or boxes.nelement() == 0:
-                    writer.save(None, None, None, None, None, orig_img, im_name)
+                    if args.show_frame:
+                        writer.save(None, None, None, None, None, orig_img, im_name)
+                    else:
+                        black_img = Image.new('RGB', (orig_img.shape[1], orig_img.shape[0]), (0, 0, 0))
+                        writer.save(None, None, None, None, None, np.array(black_img), im_name)
+
                     continue
                 if args.profile:
                     ckpt_time, det_time = getTime(start_time)
