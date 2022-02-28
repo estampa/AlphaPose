@@ -26,9 +26,11 @@ from alphapose.utils.writer import DataWriter
 
 """----------------------------- Demo options -----------------------------"""
 parser = argparse.ArgumentParser(description='AlphaPose Demo')
-parser.add_argument('--cfg', type=str, required=True,
+parser.add_argument('--cfg', type=str,
+                    default='configs/halpe_coco_wholebody_136/resnet/256x192_res50_lr1e-3_2x-regression.yaml',
                     help='experiment configure file name')
-parser.add_argument('--checkpoint', type=str, required=True,
+parser.add_argument('--checkpoint', type=str,
+                    default='pretrained_models/multi_domain_fast50_regression_256x192.pth',
                     help='checkpoint file name')
 parser.add_argument('--sp', default=False, action='store_true',
                     help='Use single process for pytorch')
