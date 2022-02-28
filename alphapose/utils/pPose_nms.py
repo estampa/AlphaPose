@@ -719,6 +719,12 @@ def write_json(all_results, outputpath, form=None, for_eval=False, outputfile='a
                     tmp['pose_keypoints_2d'].append(result['keypoints'][i+1])
                     tmp['pose_keypoints_2d'].append(result['keypoints'][i+2])
                 json_results_cmu[result['image_id']]['people'].append(tmp)
+            elif form == 'estampa':  # the form of OpenPose
+                result['face'] = [float(kp_preds[0, 0]), float(kp_preds[0, 1])]
+                result['neck'] = [float(kp_preds[18, 0]), float(kp_preds[18, 1])]
+                result['pelvis'] = [float(kp_preds[19, 0]), float(kp_preds[19, 1])]
+                result['keypoints'] = []
+                json_results.append(result)
             else:
                 json_results.append(result)
 

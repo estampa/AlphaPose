@@ -54,8 +54,8 @@ parser.add_argument('--showbox', default=False, action='store_true',
                     help='visualize human bbox')
 parser.add_argument('--profile', default=False, action='store_true',
                     help='add speed profiling at screen output')
-parser.add_argument('--format', type=str,
-                    help='save in the format of cmu or coco or openpose, option: coco/cmu/open')
+parser.add_argument('--format', type=str, default='estampa',
+                    help='save in the format of cmu or coco or openpose, option: coco/cmu/open/estampa')
 parser.add_argument('--min_box_area', type=int, default=0,
                     help='min box area to filter out')
 parser.add_argument('--detbatch', type=int, default=5,
@@ -72,7 +72,7 @@ parser.add_argument('--flip', default=False, action='store_true',
                     help='enable flip testing')
 parser.add_argument('--debug', default=False, action='store_true',
                     help='print detail information')
-"""----------------------------- Video options -----------------------------"""
+"""----------------------------- Estampa options -----------------------------"""
 parser.add_argument('--show_frame', default=False, action='store_true',
                     help='draw the original frame below detections')
 """----------------------------- Video options -----------------------------"""
