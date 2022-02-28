@@ -116,3 +116,7 @@ exp/json
 tmp_*/
 example/res/
 data/
+
+# Virtual env
+bin
+pyvenv.cfg
