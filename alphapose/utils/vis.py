@@ -449,7 +449,7 @@ def vis_frame(frame, im_res, opt, vis_thres, format='coco'):
 
         # Draw keypoints
         for n in range(kp_scores.shape[0]):
-            if kp_scores[n] <= vis_thres[n]:
+            if kp_scores[n] <= vis_thres[n] or np.isnan(kp_preds[n, 0]) or np.isnan(kp_preds[n, 1]):
                 continue
             cor_x, cor_y = int(kp_preds[n, 0]), int(kp_preds[n, 1])
             part_line[n] = (int(cor_x), int(cor_y))
