@@ -70,6 +70,9 @@ parser.add_argument('--flip', default=False, action='store_true',
 parser.add_argument('--debug', default=False, action='store_true',
                     help='print detail information')
 """----------------------------- Video options -----------------------------"""
+parser.add_argument('--show_frame', default=False, action='store_true',
+                    help='draw the original frame below detections')
+"""----------------------------- Video options -----------------------------"""
 parser.add_argument('--video', dest='video',
                     help='video-name', default="")
 parser.add_argument('--webcam', dest='webcam', type=int,
