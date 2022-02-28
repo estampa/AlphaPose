@@ -656,11 +656,46 @@ def PCK_match_fullbody(pick_pred, pred_score, all_preds, ref_dist):
     return num_match_keypoints
 
 
+def write_json_estampa(all_results, outputpath, outputfile):
+    json_results = []
+    for im_res in all_results:
+        im_name = im_res['imgname']
+        persons = []
+
+        for human in im_res['result']:
+            person = {}
+
+            kp_preds = human['keypoints']
+            pro_scores = human['proposal_score']
+            person['score'] = float(pro_scores)
+            if 'box' in human.keys():
+                person['box'] = human['box']
+            # pose track results by PoseFlow
+            if 'idx' in human.keys():
+                person['idx'] = human['idx']
+
+            person['face'] = [float(kp_preds[0, 0]), float(kp_preds[0, 1])]
+            person['neck'] = [float(kp_preds[18, 0]), float(kp_preds[18, 1])]
+            person['pelvis'] = [float(kp_preds[19, 0]), float(kp_preds[19, 1])]
+            person['keypoints'] = []
+            persons.append(person)
+
+        json_results.append({'image': os.path.basename(im_name), 'persons': persons})
+
+    with open(os.path.join(outputpath, outputfile), 'w') as json_file:
+        json_file.write(json.dumps(json_results))
+
+
 def write_json(all_results, outputpath, form=None, for_eval=False, outputfile='alphapose-results.json'):
     '''
     all_result: result dict of predictions
     outputpath: output directory
     '''
+
+    if form == 'estampa':
+        write_json_estampa(all_results, outputpath, outputfile)
+        return
+
     json_results = []
     json_results_cmu = {}
     for im_res in all_results:
@@ -719,12 +754,6 @@ def write_json(all_results, outputpath, form=None, for_eval=False, outputfile='a
                     tmp['pose_keypoints_2d'].append(result['keypoints'][i+1])
                     tmp['pose_keypoints_2d'].append(result['keypoints'][i+2])
                 json_results_cmu[result['image_id']]['people'].append(tmp)
-            elif form == 'estampa':  # the form of OpenPose
-                result['face'] = [float(kp_preds[0, 0]), float(kp_preds[0, 1])]
-                result['neck'] = [float(kp_preds[18, 0]), float(kp_preds[18, 1])]
-                result['pelvis'] = [float(kp_preds[19, 0]), float(kp_preds[19, 1])]
-                result['keypoints'] = []
-                json_results.append(result)
             else:
                 json_results.append(result)
 
