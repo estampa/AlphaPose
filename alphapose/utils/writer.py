@@ -40,8 +40,8 @@ class DataWriter():
             self.result_queue = mp.Queue(maxsize=queueSize)
 
         if opt.save_img:
-            if not os.path.exists(opt.outputpath + '/vis'):
-                os.mkdir(opt.outputpath + '/vis')
+            if not os.path.exists(opt.outputpath):
+                os.mkdir(opt.outputpath)
 
         if opt.pose_flow:
             from trackers.PoseFlow.poseflow_infer import PoseFlowWrapper
@@ -184,7 +184,7 @@ class DataWriter():
             cv2.imshow("AlphaPose Demo", img)
             cv2.waitKey(30)
         if self.opt.save_img:
-            cv2.imwrite(os.path.join(self.opt.outputpath, 'vis', im_name), img)
+            cv2.imwrite(os.path.join(self.opt.outputpath, im_name), img)
         if self.save_video:
             stream.write(img)
 
