@@ -75,6 +75,13 @@ parser.add_argument('--debug', default=False, action='store_true',
 """----------------------------- Estampa options -----------------------------"""
 parser.add_argument('--show_frame', default=False, action='store_true',
                     help='draw the original frame below detections')
+parser.add_argument('--traces', default=False, action='store_true',
+                    help='draw the previous frames with reduced opacity')
+parser.add_argument('--easing', type=str, default='cubic_in_out',
+                    choices=['linear', 'cubic_in', 'cubic_out', 'cubic_in_out'],
+                    help='easing function for the traces transparency')
+parser.add_argument('--trace_duration', type=int, default=25,
+                    help='number of trace frames')
 """----------------------------- Video options -----------------------------"""
 parser.add_argument('--video', dest='video',
                     help='video-name', default="")

@@ -2,6 +2,7 @@ import os
 import time
 from threading import Thread
 from queue import Queue
+from collections import deque
 
 import cv2
 import numpy as np
@@ -10,6 +11,7 @@ import torch.multiprocessing as mp
 
 from alphapose.utils.transforms import get_func_heatmap_to_coord
 from alphapose.utils.pPose_nms import pose_nms, write_json
+from alphapose.utils.easings import linear_ease, cubic_ease_in, cubic_ease_out, cubic_ease_in_out
 
 DEFAULT_VIDEO_SAVE_OPT = {
     'savepath': 'examples/res/1.mp4',
@@ -42,6 +44,9 @@ class DataWriter():
         if opt.save_img:
             if not os.path.exists(opt.outputpath):
                 os.mkdir(opt.outputpath)
+
+        if opt.traces:
+            self.traces = deque()
 
         if opt.pose_flow:
             from trackers.PoseFlow.poseflow_infer import PoseFlowWrapper
@@ -177,7 +182,26 @@ class DataWriter():
                     else:
                         from alphapose.utils.vis import vis_frame
                     img = vis_frame(orig_img, result, self.opt, self.vis_thres)
+                    if self.opt.traces:
+                        img = self.traces_image(img)
                     self.write_image(img, im_name, stream=stream if self.save_video else None)
+
+    def traces_image(self, img):
+        img_copy = img.copy()
+
+        duration = self.opt.trace_duration
+        easings = {'linear': linear_ease, 'cubic_in': cubic_ease_in, 'cubic_out': cubic_ease_out,
+                   'cubic_in_out': cubic_ease_in_out}
+        easing = easings[self.opt.easing]
+
+        for idx, trace_img in enumerate(self.traces):
+            alpha = easing(1 - idx / duration)
+            img = np.maximum(img, (trace_img * alpha).astype(np.uint8))
+
+        self.traces.appendleft(img_copy)
+        if len(self.traces) > duration:
+            self.traces.pop()
+        return img
 
     def write_image(self, img, im_name, stream=None):
         if self.opt.vis:
