@@ -677,6 +677,10 @@ def write_json_estampa(all_results, outputpath, outputfile):
             person['face'] = [float(kp_preds[0, 0]), float(kp_preds[0, 1])]
             person['neck'] = [float(kp_preds[18, 0]), float(kp_preds[18, 1])]
             person['pelvis'] = [float(kp_preds[19, 0]), float(kp_preds[19, 1])]
+            person['lwrist'] = [float(kp_preds[9, 0]), float(kp_preds[9, 1])]
+            person['rwrist'] = [float(kp_preds[10, 0]), float(kp_preds[10, 1])]
+            person['lankle'] = [float(kp_preds[15, 0]), float(kp_preds[15, 1])]
+            person['rankle'] = [float(kp_preds[16, 0]), float(kp_preds[16, 1])]
             person['keypoints'] = []
             persons.append(person)
 
