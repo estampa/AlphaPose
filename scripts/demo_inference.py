@@ -73,6 +73,8 @@ parser.add_argument('--flip', default=False, action='store_true',
 parser.add_argument('--debug', default=False, action='store_true',
                     help='print detail information')
 """----------------------------- Estampa options -----------------------------"""
+parser.add_argument('--background', default='#000000',
+                    help='background color or image')
 parser.add_argument('--show_frame', default=False, action='store_true',
                     help='draw the original frame below detections')
 parser.add_argument('--traces', default=False, action='store_true',
@@ -113,6 +115,10 @@ if not args.sp:
     torch.multiprocessing.set_start_method('forkserver', force=True)
     torch.multiprocessing.set_sharing_strategy('file_system')
 
+has_bg_image = os.path.isfile(args.background)
+if not args.show_frame and has_bg_image:
+    bg_image = Image.open(args.background)
+
 
 def check_input():
     # for wecam
@@ -147,6 +153,7 @@ def check_input():
         elif len(inputpath) and inputpath != '/':
             for root, dirs, files in os.walk(inputpath):
                 im_names = files
+            im_names = [name for name in im_names if not name.startswith('.')]
             im_names = natsort.natsorted(im_names)
         elif len(inputimg):
             args.inputpath = os.path.split(inputimg)[0]
@@ -240,14 +247,18 @@ if __name__ == "__main__":
                 (inps, orig_img, im_name, boxes, scores, ids, cropped_boxes) = det_loader.read()
                 if orig_img is None:
                     break
-                if boxes is None or boxes.nelement() == 0:
-                    if args.show_frame:
-                        writer.save(None, None, None, None, None, orig_img, im_name)
-                    else:
-                        black_img = Image.new('RGB', (orig_img.shape[1], orig_img.shape[0]), (0, 0, 0))
-                        writer.save(None, None, None, None, None, np.array(black_img), im_name)
 
+                if args.show_frame:
+                    background = orig_img
+                elif has_bg_image:
+                    background = np.array( bg_image.resize( (orig_img.shape[1], orig_img.shape[0]) ) )
+                else:
+                    background = np.array( Image.new('RGB', (orig_img.shape[1], orig_img.shape[0]), args.background) )
+
+                if boxes is None or boxes.nelement() == 0:
+                    writer.save(None, None, None, None, None, background, im_name)
                     continue
+
                 if args.profile:
                     ckpt_time, det_time = getTime(start_time)
                     runtime_profile['dt'].append(det_time)
@@ -275,7 +286,7 @@ if __name__ == "__main__":
                 if args.pose_track:
                     boxes,scores,ids,hm,cropped_boxes = track(tracker,args,orig_img,inps,boxes,hm,cropped_boxes,im_name,scores)
                 hm = hm.cpu()
-                writer.save(boxes, scores, ids, hm, cropped_boxes, orig_img, im_name)
+                writer.save(boxes, scores, ids, hm, cropped_boxes, background, im_name)
                 if args.profile:
                     ckpt_time, post_time = getTime(ckpt_time)
                     runtime_profile['pn'].append(post_time)
