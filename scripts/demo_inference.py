@@ -84,6 +84,9 @@ parser.add_argument('--easing', type=str, default='cubic_in_out',
                     help='easing function for the traces transparency')
 parser.add_argument('--trace_duration', type=int, default=25,
                     help='number of trace frames')
+parser.add_argument('--point_numbers', type=str, default='',
+                    choices=['', 'body', 'face', 'hands'],
+                    help='draw the point numbers')
 """----------------------------- Video options -----------------------------"""
 parser.add_argument('--video', dest='video',
                     help='video-name', default="")

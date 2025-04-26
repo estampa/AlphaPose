@@ -454,19 +454,27 @@ def vis_frame(frame, im_res, opt, vis_thres, format='coco'):
             cor_x, cor_y = int(kp_preds[n, 0]), int(kp_preds[n, 1])
             part_line[n] = (int(cor_x), int(cor_y))
             bg = img  # .copy()
-            if n < len(p_color):
-                if opt.tracking:
-                    cv2.circle(bg, (int(cor_x), int(cor_y)), 2, color, -1)
+            if opt.point_numbers == '':
+                if n < len(p_color):
+                    if opt.tracking:
+                        cv2.circle(bg, (int(cor_x), int(cor_y)), 2, color, -1)
+                    else:
+                        cv2.circle(bg, (int(cor_x), int(cor_y)), 2, p_color[n], -1)
                 else:
-                    cv2.circle(bg, (int(cor_x), int(cor_y)), 2, p_color[n], -1)
-            else:
-                cv2.circle(bg, (int(cor_x), int(cor_y)), 1, (255,255,255), 2)
+                    cv2.circle(bg, (int(cor_x), int(cor_y)), 1, (255,255,255), 2)
             # Now create a mask of logo and create its inverse mask also
             if n < len(p_color):
                 transparency = float(max(0, min(1, kp_scores[n])))
             else:
                 transparency = float(max(0, min(1, kp_scores[n]*2)))
             # img = cv2.addWeighted(bg, transparency, img, 1 - transparency, 0)
+
+            # Draw the point numbers
+            if opt.point_numbers != '':
+                if (opt.point_numbers == 'body' and n <= 25) or (opt.point_numbers == 'face' and n >= 26 and n <= 93) or (opt.point_numbers == 'hands' and n >= 94):
+                    font_scale = max(width, height) / 2048
+                    cv2.putText(bg, str(n), (int(cor_x - 20), int(cor_y)), DEFAULT_FONT, font_scale, WHITE, 1)
+
         # Draw limbs
         for i, (start_p, end_p) in enumerate(l_pair):
             if start_p in part_line and end_p in part_line:
