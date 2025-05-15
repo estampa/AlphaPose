@@ -188,10 +188,11 @@ def vis_frame_fast(frame, im_res, opt, vis_thres, format='coco'):
         raise NotImplementedError
     # im_name = os.path.basename(im_res['imgname'])
     height, width = frame.shape[:2]
-    if opt.show_frame:
-        img = frame.copy()
-    else:
-        img = np.zeros((height, width, 3), dtype=np.uint8)
+    # if opt.show_frame:
+    #     img = frame.copy()
+    # else:
+    #     img = np.zeros((height, width, 3), dtype=np.uint8)
+    img = frame.copy()
 
     for human in im_res['result']:
         part_line = {}
@@ -411,10 +412,11 @@ def vis_frame(frame, im_res, opt, vis_thres, format='coco'):
         raise NotImplementedError
     # im_name = os.path.basename(im_res['imgname'])
     height, width = frame.shape[:2]
-    if opt.show_frame:
-        img = frame.copy()
-    else:
-        img = np.zeros((height, width, 3), dtype=np.uint8)
+    # if opt.show_frame:
+    #     img = frame.copy()
+    # else:
+    #     img = np.zeros((height, width, 3), dtype=np.uint8)
+    img = frame.copy()
 
     for human in im_res['result']:
         part_line = {}
